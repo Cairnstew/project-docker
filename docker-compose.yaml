@@ -1,0 +1,23 @@
+version: '3.8'
+
+services:
+  zomboid-server:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: project-zomboid
+    restart: unless-stopped
+    environment:
+      - PZUSER_PASSWORD=pzpass
+      - UPDATE_SERVER=true 
+      - ADMINPASSWORD=pzpass
+    ports:
+      - "16261:16261/udp"
+      - "8766:8766/udp"
+      - "16262-16272:16262-16272/udp"
+    volumes:
+      - ./data:/home/pzuser/Zomboid
+      - ./server:/home/pzuser/pzserver
+      - ./install:/opt/pzserver
+    stdin_open: true
+    stop_grace_period: 30s
