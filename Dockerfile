@@ -29,7 +29,7 @@ RUN dpkg --add-architecture i386 && \
 
 # Create a user and give it sudo rights
 RUN useradd -m -s /bin/bash ${USER} && \
-    echo "${USER}:${PZUSER_PASSWORD}" | chpasswd && \
+    echo "${USER}:${ADMINPASSWORD}" | chpasswd && \
     usermod -aG sudo ${USER} && \
     echo "${USER} ALL=(ALL) NOPASSWD:ALL" > /etc/sudoers.d/${USER} && \
     chmod 0440 /etc/sudoers.d/${USER}

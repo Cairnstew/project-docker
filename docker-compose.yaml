@@ -8,7 +8,6 @@ services:
     container_name: project-zomboid
     restart: unless-stopped
     environment:
-      - PZUSER_PASSWORD=pzpass
       - UPDATE_SERVER=true 
       - ADMINPASSWORD=pzpass
     ports:
