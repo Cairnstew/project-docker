@@ -8,7 +8,7 @@ ENV USER=pzuser
 ENV HOME=/home/${USER}
 ENV ZOMBOIDGAMEID=108600
 ENV PZSERVER_DIR=/opt/pzserver
-ENV PZUSER_PASSWORD=pzpass
+ENV ADMINPASSWORD=pzpass
 
 # Install dependencies
 RUN dpkg --add-architecture i386 && \
@@ -54,6 +54,11 @@ ENV ZOMBOID=${HOME}/Zomboid \
     PZSERVERSPAWNREGIONS=${HOME}/Zomboid/Server/servertest_spawnregions.lua \
     PZSERVERLOCK=/tmp/pzserver.${USER}.lock \
     STEAMCMD_UPDATE_SCRIPT=${HOME}/update_zomboid.txt
+
+# Make sure directory exists and create the file
+RUN mkdir -p $PZSERVERDIR && \
+    touch $PZSERVERCONFIG && \
+    chown -R pzuser:pzuser $ZOMBOID
 
 # Install SteamCMD
 RUN mkdir -p ${HOME}/Steam && \
