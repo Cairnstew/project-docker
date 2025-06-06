@@ -8,7 +8,7 @@ services:
     container_name: project-zomboid
     restart: unless-stopped
     environment:
-      - UPDATE_SERVER=false 
+      - UPDATE_SERVER=1
       - ADMINPASSWORD=pzpass
       - DefaultPort=12345
     ports:
@@ -16,11 +16,11 @@ services:
       - "8766:8766/udp"
       - "16262-16272:16262-16272/udp"
     volumes:
-          - zomboid-data:/home/pzuser/Zomboid
-          - zomboid-server:/home/pzuser/pzserver
+      - ./data/Zomboid:/home/pzuser/Zomboid
+      - ./data/pzserver:/home/pzuser/pzserver
+      - install-volume:/opt/pzserver
     stdin_open: true
     stop_grace_period: 30s
 
 volumes:
-  zomboid-data:
-  zomboid-server:
+    install-volume:

@@ -55,10 +55,6 @@ ENV ZOMBOID=${HOME}/Zomboid \
     PZSERVERLOCK=/tmp/pzserver.${USER}.lock \
     STEAMCMD_UPDATE_SCRIPT=${HOME}/update_zomboid.txt
 
-# Make sure directory exists and create the file
-RUN mkdir -p $PZSERVERDIR && \
-    touch $PZSERVERCONFIG && \
-    chown -R pzuser:pzuser $ZOMBOID
 
 # Install SteamCMD
 RUN mkdir -p ${HOME}/Steam && \
@@ -68,15 +64,27 @@ RUN mkdir -p ${HOME}/Steam && \
 
 ENV PATH="${HOME}/Steam:${PATH}"
 
+# Make sure directories and files exist with correct ownership
+RUN mkdir -p $PZSERVERDIR && \
+    mkdir -p $ZOMBOID && \
+    touch $PZSERVERCONFIG && \
+    chown -R ${USER}:${USER} /home/${USER}
+
+RUN mkdir -p /home/pzuser && \
+    cat <<'EOL' > /home/pzuser/update_zomboid.txt
+// update_zomboid.txt
+//
+@ShutdownOnFailedCommand 1 //set to 0 if updating multiple servers at once
+@NoPromptForPassword 1
+force_install_dir /opt/pzserver/
+//for servers which dont need a login
+login anonymous
+app_update 380870 validate
+quit
+EOL
+
+
 USER ${USER}
-# Generate SteamCMD update script
-RUN /home/${USER}/Steam/steamcmd.sh \
-    +@ShutdownOnFailedCommand 1 \
-    +@NoPromptForPassword 1 \
-    +force_install_dir /opt/pzserver/ \
-    +login anonymous \
-    +app_update 380870 validate \
-    +quit
 
 # Copy entrypoint script
 COPY --chown=pzuser:pzuser entrypoint.sh ${HOME}/entrypoint.sh

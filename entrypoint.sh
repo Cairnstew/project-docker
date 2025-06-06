@@ -4,6 +4,12 @@ set -e
 
 INI_FILE="/home/pzuser/Zomboid/Server/servertest.ini"
 
+# Fix permissions if running as pzuser
+if [ "$(id -u)" -ne 0 ]; then
+  echo "Fixing permissions for Zomboid directory..."
+  sudo chown -R "$(id -u):$(id -g)" "$ZOMBOID"
+fi
+
 # Helper to set or update a key=value pair in the ini file
 set_ini_value() {
   local key="$1"
@@ -158,6 +164,7 @@ declare -A defaults=(
 # Check ini file exists
 if [ ! -f "$INI_FILE" ]; then
   echo "Warning: $INI_FILE not found, creating a new one."
+  mkdir -p "$(dirname "$INI_FILE")"  # Ensure parent directories exist
   touch "$INI_FILE"
 fi
 
@@ -253,3 +260,4 @@ if [ -n "${STEAMVAC}" ]; then
 fi
 
 exec /opt/pzserver/start-server.sh $ARGS
+#exec bash
